@@ -1,5 +1,6 @@
 class Movement 
   def initialize
+    @rep = "UNDEFINED"
   end
 
   def vs_scissors
@@ -13,6 +14,12 @@ class Movement
   def vs_paper
     0
   end
+
+  def to_s
+    self.rep
+  end
+
+  private 
 
   def oposite(n)
     if n == 1
@@ -26,6 +33,7 @@ end
 
 class Rock < Movement 
   def initialize
+    @rep = "✊"
   end
 
   def score(m)
@@ -36,14 +44,11 @@ class Rock < Movement
   def vs_scissors
     1
   end
-
-  def to_s
-    "✊" 
-  end
 end
 
 class Paper < Movement 
-  def initialize    
+  def initialize
+    @rep = "✋"
   end
 
   def score(m)
@@ -55,13 +60,11 @@ class Paper < Movement
     1
   end
 
-  def to_s
-    "✋"
-  end
 end
 
 class Scissors < Movement 
   def initialize
+    @rep = "✀"
   end
 
   def score(m)
@@ -72,8 +75,47 @@ class Scissors < Movement
   def vs_paper
       1
   end
+end
+
+# Estrategias
+class Strategy
+  SEED = 42
+
+  def initialize
+    @rep = "UNDEFINED"
+  end
+
+  def next(m)
+  end
 
   def to_s
-      "✀"
+    self.rep
+  end
+
+  def reset
+  end
+
+  def add_rep
+    self.class.to_s + " Strategy"
+  end
+end
+
+class Uniform < Strategy
+  attr_accessor :randomizer
+
+  def initialize(moves)
+    @rep = add_rep
+    @randomizer = Random.new(SEED)
+    
+    if moves.empty?
+      raise 'Uniform strategy needs at least 1 move'
+    else
+      @moves = moves.uniq
+    end
+  end
+  
+  # Creo que esta dist no es uniforme, generar un float entre 0 y 1
+  def next(m)
+    eval(@moves[randomizer.rand(@moves.size)].to_s).new
   end
 end

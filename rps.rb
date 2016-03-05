@@ -100,30 +100,43 @@ class Strategy
   end
 end
 
-# Incompleta, podría ser subclase de Biased con prob 1/tot para cada 1
-class Uniform < Strategy
-  attr_accessor :randomizer
+class Biased < Strategy
+  attr_accessor :randomizer, :moves
 
   def initialize(moves)
     @rep = add_rep
-    @randomizer = Random.new(SEED)
+    self.randomizer = Random.new(SEED)
     
     if moves.empty?
-      raise 'Uniform strategy needs at least 1 move'
+      raise self.to_s + ' needs at least 1 move'
     else
-      @moves = moves.uniq
+      @moves = moves
     end
   end
   
-  # Creo que esta dist no es uniforme, generar un float entre 0 y 1
+
   def next(m)
-    eval(@moves[randomizer.rand(@moves.size)].to_s).new
+    randNumber = self.randomizer.rand(0...self.moves.map{|s| s[1]}.reduce(0,:+))
+    puts randNumber
+    self.moves.each do |mov,limit|
+      if randNumber < limit
+        return eval(mov.to_s).new
+      else
+        randNumber -= limit
+      end 
+    end
   end
 end
 
-# 
-class Biased < Strategy
+class Uniform < Biased
+  def initialize(moves)
+    hash  = {}
+    moves = moves.uniq
+    moves.each { |movement| hash.store(movement,1)}
+    super(hash)
+  end
 end
+
 
 class Mirror < Strategy
   def initialize
@@ -139,5 +152,52 @@ class Mirror < Strategy
 
   def reset
     @last_move = Rock.new
+  end
+end
+
+class Smart < Biased
+
+  ININITSTATE = {:Rock => 1, :Paper => 0, :Scissors => 0}
+
+  def initialize
+    super ININITSTATE.clone
+  end
+
+  def next(m)
+    move_made = super 
+
+    # Almacenamos la jugada opuest
+    case m 
+    when Rock
+      self.moves[:Paper] += 1
+    when Scissors
+      self.moves[:Rock] += 1
+    when Paper
+      self.moves[:Scissors] += 1
+    end
+
+    move_made
+  end
+
+  def reset
+    self.randomizer = Random.new(SEED)
+    self.moves      = ININITSTATE.clone
+  end
+end
+
+class Match
+  def initialize(playersHash)
+    unless playersHash.is_a? Hash
+      raise "Parameter given is not a hash"
+    end
+
+    unless playersHash.size.eql? 2
+      raise "Match must have 2 players exactly inside hash"
+    end
+
+    unless playersHash.all? { |m,est| est.is_a? Strategy}
+      rais "All values in hash must be strategies"
+    end
+
   end
 end

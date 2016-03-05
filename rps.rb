@@ -1,4 +1,6 @@
-class Movement 
+class Movement
+  attr_accessor :rep
+
   def initialize
     @rep = "UNDEFINED"
   end
@@ -30,7 +32,6 @@ class Movement
   end
 end
 
-
 class Rock < Movement 
   def initialize
     @rep = "✊"
@@ -59,7 +60,6 @@ class Paper < Movement
   def vs_rock
     1
   end
-
 end
 
 class Scissors < Movement 
@@ -89,7 +89,7 @@ class Strategy
   end
 
   def to_s
-    self.rep
+    @rep
   end
 
   def reset
@@ -100,6 +100,7 @@ class Strategy
   end
 end
 
+# Incompleta, podría ser subclase de Biased con prob 1/tot para cada 1
 class Uniform < Strategy
   attr_accessor :randomizer
 
@@ -117,5 +118,26 @@ class Uniform < Strategy
   # Creo que esta dist no es uniforme, generar un float entre 0 y 1
   def next(m)
     eval(@moves[randomizer.rand(@moves.size)].to_s).new
+  end
+end
+
+# 
+class Biased < Strategy
+end
+
+class Mirror < Strategy
+  def initialize
+    @rep = add_rep
+    @last_move= Rock.new
+  end
+
+  def next(m)
+    previous   = @last_move
+    @last_move = m
+    previous
+  end
+
+  def reset
+    @last_move = Rock.new
   end
 end

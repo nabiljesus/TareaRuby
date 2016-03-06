@@ -5,30 +5,8 @@ class Movement
     @rep = "UNDEFINED"
   end
 
-  def vs_scissors
-    0
-  end
-
-  def vs_rock
-    0
-  end
-
-  def vs_paper
-    0
-  end
-
   def to_s
     self.rep
-  end
-
-  private 
-
-  def oposite(n)
-    if n == 1
-      0
-    else
-      1
-    end
   end
 end
 
@@ -38,12 +16,19 @@ class Rock < Movement
   end
 
   def score(m)
-    oponent = m.vs_rock
-    [oposite(oponent),oponent]
+    m.vs_rock
   end
 
   def vs_scissors
-    1
+    [0,1]
+  end
+
+  def vs_rock
+    [1,1]
+  end
+
+  def vs_paper
+    [1,0]
   end
 end
 
@@ -54,12 +39,20 @@ class Paper < Movement
 
   def score(m)
     oponent = m.vs_paper
-    [oposite(oponent),oponent]
   end
 
   def vs_rock
-    1
+    [0,1]
   end
+
+  def vs_paper
+    [1,1]
+  end
+
+  def vs_scissors
+    [1,0]
+  end
+
 end
 
 class Scissors < Movement 
@@ -69,13 +62,21 @@ class Scissors < Movement
 
   def score(m)
     oponent = m.vs_scissors
-    [oposite(oponent),oponent]
   end
 
   def vs_paper
-      1
+    [0,1]
+  end
+
+  def vs_scissors
+    [1,1]
+  end
+
+  def vs_rock
+    [1,0]
   end
 end
+
 
 # Estrategias
 class Strategy
@@ -89,7 +90,7 @@ class Strategy
   end
 
   def to_s
-    @rep
+    @rep + extras
   end
 
   def reset
@@ -97,6 +98,10 @@ class Strategy
 
   def add_rep
     self.class.to_s + " Strategy"
+  end
+
+  def extras
+    ""
   end
 end
 
@@ -114,10 +119,9 @@ class Biased < Strategy
     end
   end
   
-
   def next(m)
     randNumber = self.randomizer.rand(0...self.moves.map{|s| s[1]}.reduce(0,:+))
-    puts randNumber
+    # puts randNumber
     self.moves.each do |mov,limit|
       if randNumber < limit
         return eval(mov.to_s).new
@@ -125,6 +129,10 @@ class Biased < Strategy
         randNumber -= limit
       end 
     end
+  end
+
+  def extras
+    ":" + @moves.each
   end
 end
 
@@ -146,14 +154,20 @@ class Mirror < Strategy
 
   def next(m)
     previous   = @last_move
-    @last_move = m
+    unless m.nil?
+      @last_move = m
+    end
     previous
   end
 
   def reset
     @last_move = Rock.new
+    self
   end
 end
+
+
+
 
 class Smart < Biased
 
@@ -166,7 +180,7 @@ class Smart < Biased
   def next(m)
     move_made = super 
 
-    # Almacenamos la jugada opuest
+    # Almacenamos la jugada opuesta, en caso contrario no se hace nada
     case m 
     when Rock
       self.moves[:Paper] += 1
@@ -182,10 +196,15 @@ class Smart < Biased
   def reset
     self.randomizer = Random.new(SEED)
     self.moves      = ININITSTATE.clone
+    self
   end
 end
 
+
+
 class Match
+  attr_reader   :players,:strategies, :last_move,:times_played
+
   def initialize(playersHash)
     unless playersHash.is_a? Hash
       raise "Parameter given is not a hash"
@@ -196,8 +215,50 @@ class Match
     end
 
     unless playersHash.all? { |m,est| est.is_a? Strategy}
-      rais "All values in hash must be strategies"
+      raise "All values in hash must be strategies"
     end
 
+    @players,@strategies = playersHash.keys,playersHash.values
+    @results      = [0,0]
+    @times_played = 0
+    @last_moves   = nil
+  end
+
+  def rounds(n)
+    n.times { play }
+    @times_played += n
+    results
+  end
+
+  def upto(n)
+    while @results.max < n
+      play
+      @times_played += 1
+    end
+    results
+  end
+
+  def restart
+    @last_move    = nil
+    @results      = [0,0]
+    @times_played = 0
+    @strategies = @strategies.map { |strategy| strategy.reset }
+  end
+
+  def results
+    { players[0]=>@results[0],
+      players[1]=>@results[1],
+      :Rounds   =>@times_played}
+  end
+
+  private 
+  def play
+    p1 = strategies[0].next(@last_move) # last_move puede ser o no nil
+    p2 = strategies[1].next(p1)
+    @last_move = p2
+    res = p1.score(p2)
+    puts p1.to_s + " vs " + p2.to_s + ": " + res.to_s
+    @results[0] += res[0]
+    @results[1] += res[1]
   end
 end

@@ -97,11 +97,11 @@ class Strategy
   end
 
   def add_rep
-    self.class.to_s + " Strategy"
+    "<" + self.class.to_s + " Strategy"
   end
 
   def extras
-    ""
+    ">"
   end
 end
 
@@ -132,7 +132,12 @@ class Biased < Strategy
   end
 
   def extras
-    ":" + @moves.each
+    total = self.moves.map{|s| s[1]}.reduce(0,:+)
+    strs = " | probabilities"
+    @moves.each do |key,val|
+      strs += " " + key.to_s + "=>" + Rational(val,total).to_s
+    end
+    strs + ">"
   end
 end
 
@@ -148,8 +153,8 @@ end
 
 class Mirror < Strategy
   def initialize
-    @rep = add_rep
-    @last_move= Rock.new
+    @rep       = add_rep
+    @last_move = Rock.new
   end
 
   def next(m)
@@ -165,9 +170,6 @@ class Mirror < Strategy
     self
   end
 end
-
-
-
 
 class Smart < Biased
 

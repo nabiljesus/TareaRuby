@@ -1,15 +1,24 @@
+##
+# S'uperclase para los diferentes tipo de movimientos
+# en el juego de piedra, papel o tijera
 class Movement
-  attr_accessor :rep
+  # Representaci'on para un tipo de movimiento
+  attr_reader :rep
 
+  # Inicializaci'on de representaci'on indefinida para Movimiento 
   def initialize
     @rep = "UNDEFINED"
   end
 
+  # M'etodo para representar un movimiento como string, alias para rep
   def to_s
     self.rep
   end
 end
 
+##
+# Clase que representa el movimiento +Roca+
+#
 class Rock < Movement 
   def initialize
     @rep = "✊"

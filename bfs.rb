@@ -224,42 +224,29 @@ class LCR
     else
       val_clone[:where]=:left
     end
-    sendMoves = b.arity > 1
-    #puts sendMoves
-    #puts val_clone 
+
+    message = "Moviendo bote a la " + val_clone[:where].to_s
+    b.call(val_clone,message)
     
-    if sendMoves
-      message = "Moviendo bote a la " + val_clone[:where].to_s
-      b.call(val_clone,message)
-    else
-      b.call val_clone
-    end
-     
     # Si no hay elementos en el bote se pueden subir los de esa orilla,
     # si alguno ya se encontraba en el transporte se puede bajar 
     if self.value[:left].size + self.value[:right].size == 3
       self.value[self.value[:where]].each do |elem|
         val_clone                      = self.value.clone
         val_clone[self.value[:where]] -= [elem]
-        val_clone[self.value[:where]] = val_clone[self.value[:where]].sort
-        if sendMoves
-          message = "Subiendo a " + elem.to_s + " al bote"
-          b.call(val_clone,message)
-        else
-          b.call val_clone
-        end
+        val_clone[self.value[:where]]  = val_clone[self.value[:where]].sort
+        
+        message = "Subiendo a " + elem.to_s + " al bote"
+        b.call(val_clone,message)
       end
     else
       #REVISAR ESTO ACA
       val_clone = self.value.clone
       val_clone[self.value[:where]]=(val_clone[self.value[:where]].unshift missing_elem)
       val_clone[self.value[:where]]=val_clone[self.value[:where]].sort
-      if sendMoves
-        message = "Dejando en la orilla " + val_clone[:where].to_s + " al " + missing_elem.to_s
-        b.call(val_clone,message)
-      else
-        b.call val_clone
-      end
+        
+      message = "Dejando en la orilla " + val_clone[:where].to_s + " al " + missing_elem.to_s
+      b.call(val_clone,message)
     end
 
     ## Cualquier animal que se encuentre en la 

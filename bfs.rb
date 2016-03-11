@@ -1,4 +1,9 @@
+##
+# Mixin para recorrido Breadth-first Search
 module BFS
+  # Búsqueda BFS desde el nodo inicial aplicando el predicado en el 
+  # contenido. Al encontrar el nodo lo retorna, si no lo encuentra se 
+  # retorna nil.
   def find(start,&predicate)
     queue = []
     queue.push(start)
@@ -26,6 +31,9 @@ module BFS
     return nil
   end
 
+  # Búsqueda BF desde el nodo start, aplicando el predicado en los 
+  # nodos recorridos. Cuando algún predicado se cumpla, se retorna la lista
+  # con el recorrido, en caso contrario se retorna objeto indefinido.
   def path(start,&predicate)
     queue = []
     queue.push([0,1,start])
@@ -61,6 +69,7 @@ module BFS
     return nil
   end
 
+  # Recorrido aplicando la acción dada desde en nodo inicial start en BFS.
   def walk(start,&action)
     queue = []
     queue.push(start)
@@ -85,6 +94,7 @@ module BFS
     return visited
   end
 
+  
   def getPath(graph,counter,path=[])
     puts 'Entered'
     if counter==0
@@ -106,11 +116,11 @@ module BFS
   end
 
   private :getPath 
-    def evalPred(node,&p)
-      if p.call(node)
-        return node
-      end   
-    end
+  def evalPred(node,&p)
+    if p.call(node)
+      return node
+    end   
+  end
   private :evalPred 
 end
 

@@ -187,8 +187,31 @@ def LCR
   attr_reader :value
 
   # Inicialización del juego, se recibe el estado inicial de la clase
-  def initialize(a)
-    #
+
+  def initialize(value=Hash[:where=>:left,:left=>[:wolf,:sheep,:cabbage],:right=>[]])
+  #   begin
+  #     hkeys=value.keys
+  #     tsiz=value[:left].length+value[:right].length
+
+  #   rescue
+  #     #handle the error here
+  #   ensure
+  #     !(value.nil?)
+  #   end
+  #   ensure
+  #     hkeys.all? {|key| key.class.name=="Symbol"}
+  #   end
+  #   #ensure
+  #   #  hkeys.include? :right && hkeys.include? :left && hkeys.include? :where   
+  #   #end
+  #   ensure
+  #     [:right,:left].include? value[:where]
+  #   end
+  #   ensure
+  #     tsiz==2 || tsiz == 3
+  #   end
+  # else
+    @value=value
   end
 
   # Dado un bloque b, se itera sobre los hijos del estado actual
@@ -229,7 +252,19 @@ def LCR
   # Procedimiento que resuelve el problema de búsqueda imprimiendo las acciones
   # que se realizaron
   def solve
-    #
+    ##Chequear que sea un estado inicial valido o arrojar exepcion
+    inode=GraphNode.new(self)
+    queue=[inode]
+    actValue=@value
+    visitados=[inode]
+    solution=getSolution(@value)
+    while (actValue!=solution)
+      node=queue.shift
+      actValue=node.value.value
+      nodeChildren=[]
+      node.value.each do |child|
+        
+    end
   end
 
   private

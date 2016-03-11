@@ -43,15 +43,23 @@ puts 'trululu'
 
 # end
 
-graphG=GraphNode.new('G')
-graphD=GraphNode.new('D',[graphG])
-graphC=GraphNode.new('C',[graphG,graphC])
-graphB=GraphNode.new('B',[graphD])
-graphA=GraphNode.new('A',[graphB,graphC])
-graphS=GraphNode.new('S',[graphA,graphG])
+xgraphG=GraphNode.new('Gz')
+xgraphD=GraphNode.new('Dz',[xgraphG])
+xgraphC=GraphNode.new('Cz',[xgraphG,xgraphC])
+xgraphB=GraphNode.new('Bz',[xgraphD])
+xgraphA=GraphNode.new('Az',[xgraphB,xgraphC])
+xgraphS=GraphNode.new('Sz',[xgraphA,xgraphG])
+xgraphG.children=[xgraphS]
+
+graphG=GraphNode.new(xgraphG)
+graphD=GraphNode.new(xgraphD,[graphG])
+graphC=GraphNode.new(xgraphC,[graphG,graphC])
+graphB=GraphNode.new(xgraphB,[graphD])
+graphA=GraphNode.new(xgraphA,[graphB,graphC])
+graphS=GraphNode.new(xgraphS,[graphA,graphG])
 graphG.children=[graphS]
 
-action = proc {|node| node.value=='W'}
+action = proc {|node| node.value.value=='Gz'}
 y=graphS.find(graphS,&action)
 puts "FUCK THIS SHIT"
 puts y.nil?

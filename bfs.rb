@@ -170,4 +170,16 @@ class GraphNode
     include BFS
 end
 
-#Repetir bfs, utilizando mixin.
+def LCR
+  attr_reader :value
+  def initialize(a)
+    #
+  end
+  def each(p)
+    #
+  end
+  def solve
+    #
+  end
+end
+

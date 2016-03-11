@@ -273,8 +273,9 @@ def LCR
   # private
   def missing_elem
     [:wolf,:cabbage,:sheep].each do |e|
-    unless ((self.value[:left].include? e) or (self.value[:left].include? e))
-      return e
+      unless ((self.value[:left].include? e) or (self.value[:left].include? e))
+        return e
+      end
     end
   end
 end

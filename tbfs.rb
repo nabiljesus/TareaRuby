@@ -29,19 +29,37 @@ puts 'trululu'
 
 #puts 'hia\n'
 
-x=proc {|x| x.value>13}
+# x=proc {|x| x.value>13}
 
 
-y=tree.path(tree,&x)
-puts y.nil?
+# y=tree.path(tree,&x)
+# puts y.nil?
+# puts "FUCK THIS SHIT"
+# if  !(y.nil?)
+# 	y.each {|v| puts v.value}
+# 	puts "\ngraph shit"
+# else
+# 	puts "Null muthafucka."
+
+# end
+
+graphG=GraphNode.new('G')
+graphD=GraphNode.new('D',[graphG])
+graphC=GraphNode.new('C',[graphG,graphC])
+graphB=GraphNode.new('B',[graphD])
+graphA=GraphNode.new('A',[graphB,graphC])
+graphS=GraphNode.new('S',[graphA,graphG])
+graphG.children=[graphS]
+
+action = proc {|node| node.value=='W'}
+y=graphS.find(graphS,&action)
 puts "FUCK THIS SHIT"
-if  !(y.nil?)
-	y.each {|v| puts v.value}
-	puts "\ngraph shit"
-else
-	puts "Null muthafucka."
-
+puts y.nil?
+#y.each {|v| puts v.value}
+unless y.nil?
+	puts y.value
 end
+puts "\ngraph shit"
 
 # x=[2,3,4,5]
 # y=x.collect{|v| GraphNode.new(v)}

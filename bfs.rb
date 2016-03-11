@@ -7,13 +7,15 @@ module BFS
 
             while(!queue.empty?)
               node = queue.shift
+              print "He visitado a: "
               puts node.value
-              visited.push(node)
 
               val=evalPred(node,&predicate)
               unless val.nil?
                 return val
               end
+
+              visited.push(node)
 
               node.each do |child|
                 if !(visited.include? child)
@@ -60,6 +62,31 @@ module BFS
             end
 
             return nil
+        end
+
+        def walk(start,&action)
+
+            queue = []
+            queue.push(start)
+            visited = []
+
+            while(!queue.empty?)
+              node = queue.shift
+              print "He visitado a: "
+              puts node.value
+
+              action.call(node)
+
+              visited.push(node)
+
+              node.each do |child|
+                if !(visited.include? child)
+                  queue.push(child)
+                end
+              end
+            end
+
+            return visited
         end
 
         def getPath(graph,counter,path=[])

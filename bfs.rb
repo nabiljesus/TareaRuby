@@ -27,67 +27,52 @@ module BFS
 
         def path(start,&predicate)
 
+
             queue = []
-            queue.push([0,start])
+            queue.push([0,1,start])
             visited = []
-            ograph = Hash[]
-            dadcounter=0
-            oldnode=start
-            counter=0
+            counter=1
+            familyTree=Hash[]
 
             while(!queue.empty?)
-              dadcounter,node = queue.shift
-              ograph[counter]=[dadcounter,node,oldnode]
-              counter+=1
-              #puts node.value
-              visited.push(node)
-              puts "GET IT"
+              iddad,idnode,node = queue.shift
               puts node.value
-              
+              visited.push(node)
+              familyTree[idnode]=[iddad,node]
+
               val=evalPred(node,&predicate)
               unless val.nil?
-                puts "DA ANSWER"
-                puts node.value
-                puts counter
-                myp=[]
-                ograph.each {|i,p| myp+=["#{i}=>[Son: #{p[2].value}, Dad: #{p[1].value},dcount: #{p[0]}]"]}
-                puts myp.join(", ")
-                return getPath(ograph,counter,[node])
+                return getPath(familyTree,idnode,[])
               end
-
-              #oldcounter=counter
-              oldnode=node
 
               node.each do |child|
                 if !(visited.include? child)
-                  queue.push([counter,child,oldnode])
-                  #ograph[counter]=[oldcounter,node,child]
-                  #puts "da hash"
-                  #puts ograph.keys.to_s
+                  counter+=1
+                  queue.push([idnode,counter,child])
                 end
               end
             end
 
+            return nil
         end
 
         def getPath(graph,counter,path=[])
           puts 'Entered'
-          if counter==0
-            puts 'llegue a 0'
+          if counter==1
+            puts 'llegue a 1'
             puts "THe path is:"
-            myp=[]
-            graph.each {|i,p| myp+=[[p[2].value,p[1].value,p[0]]]}
-            puts myp.to_s
+            #myp=[]
+            #graph.each {|i,p| myp+=[[p[2].value,p[1].value,p[0]]]}
+            #puts myp.to_s
             return path
           end
-          val = graph[counter]
-          if val.nil?
+          iddad,node = graph[counter]
+          if node.nil?
             return nil
           else
-            path.unshift(val[2])
+            path.unshift(node)
             puts '----'
-            puts val[2].value
-            return getPath(graph,val[0],path)
+            return getPath(graph,iddad,path)
           end
         end
         private :getPath 

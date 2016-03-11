@@ -36,6 +36,7 @@ module BFS
 
             while(!queue.empty?)
               iddad,idnode,node = queue.shift
+              print "Desencolo a: "
               puts node.value
               visited.push(node)
               familyTree[idnode]=[iddad,node]
@@ -47,8 +48,13 @@ module BFS
 
               node.each do |child|
                 if !(visited.include? child)
+                  print "Encolo a: "
+                  puts child.value
                   counter+=1
                   queue.push([idnode,counter,child])
+                else
+                  print "Ya visito a: "
+                  puts child.value
                 end
               end
             end
@@ -58,8 +64,8 @@ module BFS
 
         def getPath(graph,counter,path=[])
           puts 'Entered'
-          if counter==1
-            puts 'llegue a 1'
+          if counter==0
+            puts 'llegue a 0'
             puts "THe path is:"
             #myp=[]
             #graph.each {|i,p| myp+=[[p[2].value,p[1].value,p[0]]]}

@@ -5,7 +5,7 @@ tree0  = BinTree.new(0)
 tree2  = BinTree.new(2)
 tree1  = BinTree.new(1,tree0,tree2)
 tree5  = BinTree.new(5)
-tree4  = BinTree.new(4,tree5)
+tree4  = BinTree.new(4,nil,tree5)
 tree6  = BinTree.new(6,tree4)
 tree3  = BinTree.new(3,tree1,tree6)
 tree10  = BinTree.new(10)
@@ -14,10 +14,10 @@ tree8  = BinTree.new(8)
 tree9  = BinTree.new(9,tree8,tree11)
 tree14  = BinTree.new(14)
 tree15  = BinTree.new(15,tree14)
-tree13  = BinTree.new(13,tree15)
+tree13  = BinTree.new(13,nil,tree15)
 tree12  = BinTree.new(12,tree9,tree13)
 tree       = BinTree.new(7,tree3,tree12)
-#tree0.left = tree
+tree13.left = tree
 #treel.left=tree
 #puts tree.left.value
 #puts tree.right.value
@@ -35,8 +35,13 @@ x=proc {|x| x.value>13}
 y=tree.path(tree,&x)
 puts y.nil?
 puts "FUCK THIS SHIT"
-y.each {|v| puts v}
-puts "\ngraph shit"
+if  !(y.nil?)
+	y.each {|v| puts v.value}
+	puts "\ngraph shit"
+else
+	puts "Null muthafucka."
+
+end
 
 # x=[2,3,4,5]
 # y=x.collect{|v| GraphNode.new(v)}

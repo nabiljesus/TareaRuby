@@ -188,7 +188,7 @@ class LCR
   attr_reader :value
   # Inicialización del juego, se recibe el estado inicial de la clase
 
-  def initialize(value=Hash[:where=>:left,:left=>[:wolf,:sheep,:cabbage],:right=>[]])
+  def initialize(value=Hash[:where=>:left,:left=>[:cabbage,:sheep,:wolf],:right=>[]])
   #   begin
   #     hkeys=value.keys
   #     tsiz=value[:left].length+value[:right].length
@@ -210,7 +210,8 @@ class LCR
   #     tsiz==2 || tsiz == 3
   #   end
   # else
-    @value=value
+    myH={:where=>value[:where],:left=>value[:left].sort,:right=>value[:right].sort}
+    @value=myH
   end
 
   # Dado un bloque b, se itera sobre los hijos del estado actual
@@ -223,10 +224,17 @@ class LCR
     else
       val_clone[:where]=:left
     end
-    puts val_clone 
-    b.call val_clone
-    puts "Moviendo bote a la " + val_clone[:where].to_s
-
+    sendMoves = b.arity > 1
+    puts sendMoves
+    #puts val_clone 
+    
+    if sendMoves
+      message = "Moviendo bote a la " + val_clone[:where].to_s
+      b.call(val_clone,message)
+    else
+      b.call val_clone
+    end
+     
     # Si no hay elementos en el bote se pueden subir los de esa orilla,
     # si alguno ya se encontraba en el transporte se puede bajar 
     if self.value[:left].size + self.value[:right].size == 3
@@ -234,17 +242,26 @@ class LCR
         val_clone                      = self.value.clone
         val_clone[self.value[:where]] -= [elem]
         b.call val_clone
-        puts "Subiendo a " + elem.to_s + " al bote"
+        if sendMoves
+          message = "Subiendo a " + elem.to_s + " al bote"
+          b.call(val_clone,message)
+        else
+          b.call val_clone
+        end
       end
     else
       val_clone = self.value.clone
-      self.value[self.value[:where]].unshift missing_elem
-      b.call val_clone
-      puts "Dejando en la orilla " + val_clone[:where].to_s + " al " + missing_elem.to_s
+      self.value[self.value[:where]]=(self.value[self.value[:where]].unshift missing_elem).sort
+      if sendMoves
+        message = "Dejando en la orilla " + val_clone[:where].to_s + " al " + missing_elem.to_s
+        b.call(val_clone,message)
+      else
+        b.call val_clone
+      end
     end
 
-    # Cualquier animal que se encuentre en la 
-    val_clone = self.value.clone
+    ## Cualquier animal que se encuentre en la 
+    ##val_clone = self.value.clone
     
 
   end
@@ -253,30 +270,67 @@ class LCR
   # que se realizaron
   def solve
     ##Chequear que sea un estado inicial valido o arrojar exepcion
-    inode=GraphNode.new(self)
+
+    #Agregar valores iniciales
+    inode=GraphNode.new([self,"Everyone in x shore"])
+    myGraph=inode
     queue=[inode]
     actValue=@value
     visited=[]
-    #solution=getSolution(@value)
+    solution=getSolution(@value)
+
+    #Construyendo el árbol de estados hasta crear una solución posible 'solution'
     while (actValue!=solution)
       node=queue.shift
-      visited.shift(node)
-      actValue=node.value.value
-      actLCR=node.value
+      actValue=node.value[0].value
+      visited.unshift(actValue)
+      actLCR=node.value[0]
 
       cChildren=[]
-      actLCR.each {|maybC| cChildren+=maybC }
-
-
+      actLCR.each do |maybC,msg|
+        unless (!(isValid(maybC)) || (visited.include? maybC))
+          childLCR=LCR.new(maybC)
+          childNode=GraphNode.new([childLCR,msg])
+          node.children.push(childNode)
+          queue.push(childNode)
+        end
+      end
     end
+
+    #Recorriendo el Grafo generado, myGraph, en busqueda de la solucion deseada ((myGraph.path(myGraph,&proc ])))
+    myPath = []
+    checkIfSolution=proc {|node,mesg| node.value==solution}
+    myPath = myGraph.path(myGraph,&checkIfSolution)
   end
 
-  # private
+  ##Dado un estado con un symbol en el bote, devuelve dicho symbol.
   def missing_elem
     [:wolf,:cabbage,:sheep].each do |e|
-      unless ((self.value[:left].include? e) or (self.value[:left].include? e))
+      unless ((self.value[:left].include? e) || (self.value[:left].include? e))
         return e
       end
     end
   end
+
+  ##Dado un estado, devuelve true si es valido, false en caso contrario
+  def isValid(thisState)
+    return !(thisState.sort==[:sheep,:wolf] || thisState.sort==[:cabbage,:sheep])
+  end
+
+  ##Dado un estado inicial, devuelve la solución deseada
+  def getSolution(iState)
+    if (iState[:left].size + iState[:right].size < 3) ||
+       (iState[:left].size==3 && iState[:right].size !=0) ||
+       (iState[:right].size==3 && iState[:left].size !=0)
+      #Arrojar exeption?
+      return nil
+    else 
+      if iState[:left].size==3
+        return {:where=>:right,:left=>[],:right=>[:cabbage,:sheep,:wolf]}
+      else  
+        return {:where=>:left,:left=>[:cabbage,:sheep,:wolf],:right=>[]}
+      end
+    end
+  end
+
 end

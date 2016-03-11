@@ -1,6 +1,6 @@
 require_relative 'bfs'
 
-g = LCR.new({:where=>:right, :left=>[:wolf, :cabbage], :right=>[:sheep]})
-g.each do |val|
-  puts val
-end
+g = LCR.new({:where=>:left, :left=>[:cabbage,:sheep,:wolf], :right=>[]})
+
+
+g.solve

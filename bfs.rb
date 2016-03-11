@@ -210,7 +210,7 @@ def LCR
   #     tsiz==2 || tsiz == 3
   #   end
   # else
-    @value = value
+    @value=value
   end
 
   # Dado un bloque b, se itera sobre los hijos del estado actual
@@ -255,23 +255,26 @@ def LCR
     inode=GraphNode.new(self)
     queue=[inode]
     actValue=@value
-    visitados=[inode]
-    solution=getSolution(@value)
+    visited=[]
+    #solution=getSolution(@value)
     while (actValue!=solution)
       node=queue.shift
+      visited.shift(node)
       actValue=node.value.value
-      nodeChildren=[]
-      node.value.each do |child|
-        
+      actLCR=node.value
+
+      cChildren=[]
+      actLCR.each {|maybC| cChildren+=maybC }
+
+
     end
   end
 
   # private
   def missing_elem
     [:wolf,:cabbage,:sheep].each do |e|
-    unless (self.value[:left].include? e) or (self.value[:left].include? e)
+    unless ((self.value[:left].include? e) or (self.value[:left].include? e))
       return e
     end
-    return nil
   end
 end

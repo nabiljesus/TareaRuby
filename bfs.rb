@@ -183,7 +183,7 @@ end
 ##
 # Clase que modela acertijos de configuración como el de +Fox, Goose and Bag 
 # of Beans+ 
-def LCR
+class LCR
   # Lector de la configuración actual del acertijo
   attr_reader :value
   # Inicialización del juego, se recibe el estado inicial de la clase
@@ -219,19 +219,20 @@ def LCR
     
     # Se generan los dos casos para mover el bote a la derecha o a la izquierda
     if self.value[:where].eql? :left
-      val_clone[:where] = :right
+      val_clone[:where]=:right
     else
-      val_clone[:where] = :left
+      val_clone[:where]=:left
     end
+    puts val_clone 
     b.call val_clone
     puts "Moviendo bote a la " + val_clone[:where].to_s
 
     # Si no hay elementos en el bote se pueden subir los de esa orilla,
     # si alguno ya se encontraba en el transporte se puede bajar 
-    if self.value[:left].size + self.value[:left].right == 3
+    if self.value[:left].size + self.value[:right].size == 3
       self.value[self.value[:where]].each do |elem|
-        val_clone                   = self.value.clone
-        val_clone[val_clone.where] -= [elem]
+        val_clone                      = self.value.clone
+        val_clone[self.value[:where]] -= [elem]
         b.call val_clone
         puts "Subiendo a " + elem.to_s + " al bote"
       end

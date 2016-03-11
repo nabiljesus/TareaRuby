@@ -31,11 +31,14 @@ module BFS
             queue.push([0,start])
             visited = []
             ograph = Hash[]
+            dadcounter=0
+            oldnode=start
+            counter=0
 
             while(!queue.empty?)
-              aux  = queue.shift
-              node = aux[1]
-              counter = aux[0]
+              dadcounter,node = queue.shift
+              ograph[counter]=[dadcounter,node,oldnode]
+              counter+=1
               #puts node.value
               visited.push(node)
               puts "GET IT"
@@ -43,38 +46,47 @@ module BFS
               
               val=evalPred(node,&predicate)
               unless val.nil?
-                puts "maybe"
+                puts "DA ANSWER"
                 puts node.value
                 puts counter
+                myp=[]
+                ograph.each {|i,p| myp+=["#{i}=>[Son: #{p[2].value}, Dad: #{p[1].value},dcount: #{p[0]}]"]}
+                puts myp.join(", ")
                 return getPath(ograph,counter,[node])
               end
 
-              oldcounter=counter
+              #oldcounter=counter
+              oldnode=node
+
               node.each do |child|
                 if !(visited.include? child)
-                  counter+=1
-                  queue.push([counter,child])
-                  ograph[counter]=[oldcounter,node]
+                  queue.push([counter,child,oldnode])
+                  #ograph[counter]=[oldcounter,node,child]
+                  #puts "da hash"
+                  #puts ograph.keys.to_s
                 end
               end
             end
 
-            return nil
         end
 
         def getPath(graph,counter,path=[])
           puts 'Entered'
           if counter==0
             puts 'llegue a 0'
+            puts "THe path is:"
+            myp=[]
+            graph.each {|i,p| myp+=[[p[2].value,p[1].value,p[0]]]}
+            puts myp.to_s
             return path
           end
           val = graph[counter]
           if val.nil?
             return nil
           else
-            path.unshift(val[1])
+            path.unshift(val[2])
             puts '----'
-            puts val[1].value
+            puts val[2].value
             return getPath(graph,val[0],path)
           end
         end

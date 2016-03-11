@@ -35,7 +35,7 @@ x=proc {|x| x.value>13}
 y=tree.path(tree,&x)
 puts y.nil?
 puts "FUCK THIS SHIT"
-y.each {|v| puts v.value}
+y.each {|v| puts v}
 puts "\ngraph shit"
 
 # x=[2,3,4,5]

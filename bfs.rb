@@ -211,7 +211,7 @@ def LCR
   #   end
   # else
     @value=value
-  #end
+  end
   # Dado un bloque b, se itera sobre los hijos del estado actual
   def each(p)
     #
@@ -224,14 +224,18 @@ def LCR
     inode=GraphNode.new(self)
     queue=[inode]
     actValue=@value
-    visitados=[inode]
-    solution=getSolution(@value)
+    visited=[]
+    #solution=getSolution(@value)
     while (actValue!=solution)
       node=queue.shift
+      visited.shift(node)
       actValue=node.value.value
-      nodeChildren=[]
-      node.value.each do |child|
-        
+      actLCR=node.value
+
+      cChildren=[]
+      actLCR.each {|maybC| cChildren+=maybC }
+
+
     end
   end
 end

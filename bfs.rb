@@ -190,15 +190,55 @@ def LCR
   def initialize(a)
     #
   end
+
   # Dado un bloque b, se itera sobre los hijos del estado actual
-  def each(p)
-    #
+  def each(&b)
+    val_clone = self.value.clone
+    
+    # Se generan los dos casos para mover el bote a la derecha o a la izquierda
+    if self.value[:where].eql? :left
+      val_clone[:where] = :right
+    else
+      val_clone[:where] = :left
+    end
+    b.call val_clone
+    puts "Moviendo bote a la " + val_clone[:where].to_s
+
+    # Si no hay elementos en el bote se pueden subir los de esa orilla,
+    # si alguno ya se encontraba en el transporte se puede bajar 
+    if self.value[:left].size + self.value[:left].right == 3
+      self.value[self.value[:where]].each do |elem|
+        val_clone                   = self.value.clone
+        val_clone[val_clone.where] -= [elem]
+        b.call val_clone
+        puts "Subiendo a " + elem.to_s + " al bote"
+      end
+    else
+      val_clone = self.value.clone
+      self.value[self.value[:where]].unshift missing_elem
+      b.call val_clone
+      puts "Dejando en la orilla " + val_clone[:where].to_s + " al " + missing_elem.to_s
+    end
+
+    # Cualquier animal que se encuentre en la 
+    val_clone = self.value.clone
+    
+
   end
 
   # Procedimiento que resuelve el problema de búsqueda imprimiendo las acciones
   # que se realizaron
   def solve
     #
+  end
+
+  private
+  def missing_elem
+    [:wolf,:cabbage,:sheep].each do |e|
+    unless (self.value[:left].include? e) or (self.value[:left].include? e)
+      return e
+    end
+    return nil
   end
 end
 

@@ -94,6 +94,7 @@ module BFS
     return visited
   end
 
+
   # Procedimiento para obtener el camino recorrido en la estructura
   def getPath(graph,counter,path=[])
     puts 'Entered'
@@ -185,14 +186,12 @@ end
 def LCR
   # Lector de la configuración actual del acertijo
   attr_reader :value
-
   # Inicialización del juego, se recibe el estado inicial de la clase
 
   def initialize(value=Hash[:where=>:left,:left=>[:wolf,:sheep,:cabbage],:right=>[]])
   #   begin
   #     hkeys=value.keys
   #     tsiz=value[:left].length+value[:right].length
-
   #   rescue
   #     #handle the error here
   #   ensure
@@ -211,7 +210,7 @@ def LCR
   #     tsiz==2 || tsiz == 3
   #   end
   # else
-    @value=value
+    @value = value
   end
 
   # Dado un bloque b, se itera sobre los hijos del estado actual
@@ -267,7 +266,7 @@ def LCR
     end
   end
 
-  private
+  # private
   def missing_elem
     [:wolf,:cabbage,:sheep].each do |e|
     unless (self.value[:left].include? e) or (self.value[:left].include? e)
@@ -276,4 +275,3 @@ def LCR
     return nil
   end
 end
-

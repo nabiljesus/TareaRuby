@@ -225,7 +225,7 @@ class LCR
       val_clone[:where]=:left
     end
     sendMoves = b.arity > 1
-    puts sendMoves
+    #puts sendMoves
     #puts val_clone 
     
     if sendMoves
@@ -241,7 +241,7 @@ class LCR
       self.value[self.value[:where]].each do |elem|
         val_clone                      = self.value.clone
         val_clone[self.value[:where]] -= [elem]
-        b.call val_clone
+        val_clone[self.value[:where]] = val_clone[self.value[:where]].sort
         if sendMoves
           message = "Subiendo a " + elem.to_s + " al bote"
           b.call(val_clone,message)
@@ -250,8 +250,10 @@ class LCR
         end
       end
     else
+      #REVISAR ESTO ACA
       val_clone = self.value.clone
-      self.value[self.value[:where]]=(self.value[self.value[:where]].unshift missing_elem).sort
+      val_clone[self.value[:where]]=(val_clone[self.value[:where]].unshift missing_elem)
+      val_clone[self.value[:where]]=val_clone[self.value[:where]].sort
       if sendMoves
         message = "Dejando en la orilla " + val_clone[:where].to_s + " al " + missing_elem.to_s
         b.call(val_clone,message)
@@ -272,27 +274,35 @@ class LCR
     ##Chequear que sea un estado inicial valido o arrojar exepcion
 
     #Agregar valores iniciales
+    iState=@value
     inode=GraphNode.new([self,"Everyone in x shore"])
     myGraph=inode
     queue=[inode]
     actValue=@value
     visited=[]
     solution=getSolution(@value)
-
     #Construyendo el árbol de estados hasta crear una solución posible 'solution'
     while (actValue!=solution)
       node=queue.shift
+      puts node
       actValue=node.value[0].value
-      visited.unshift(actValue)
+      puts actValue
+      visited.unshift(actValue) #revisar
       actLCR=node.value[0]
-
+      #puts actValue
       cChildren=[]
       actLCR.each do |maybC,msg|
-        unless (!(isValid(maybC)) || (visited.include? maybC))
-          childLCR=LCR.new(maybC)
-          childNode=GraphNode.new([childLCR,msg])
-          node.children.push(childNode)
-          queue.push(childNode)
+        puts "--reviso hijo--"
+        puts !(visited.include? maybC)
+        unless maybC.nil?
+          if (isValid(maybC,solution) && !(visited.include? maybC))
+            childLCR=LCR.new(maybC)
+            childNode=GraphNode.new([childLCR,msg])
+            node.children.push(childNode)
+            queue.push(childNode) #revisar
+            visited.push(maybC)
+            puts maybC
+          end
         end
       end
     end
@@ -313,8 +323,16 @@ class LCR
   end
 
   ##Dado un estado, devuelve true si es valido, false en caso contrario
-  def isValid(thisState)
-    return !(thisState.sort==[:sheep,:wolf] || thisState.sort==[:cabbage,:sheep])
+  def isValid(thisState,solution)
+    #puts thisState
+    eval=false
+    #puts thisState.to_s
+    #REVISAR ESTO ACA
+    eval= ((thisState[:left]==[:cabbage,:wolf] && (thisState[:right]==[] || thisState[:right]==[:sheep]))||
+          (thisState[:right]==[:cabbage,:wolf] && (thisState[:left]==[] || thisState[:left]==[:sheep]))) ||
+          thisState==solution || thisState==@value
+    #puts eval
+    return eval
   end
 
   ##Dado un estado inicial, devuelve la solución deseada

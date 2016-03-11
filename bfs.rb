@@ -94,7 +94,7 @@ module BFS
     return visited
   end
 
-  
+  # Procedimiento para obtener el camino recorrido en la estructura
   def getPath(graph,counter,path=[])
     puts 'Entered'
     if counter==0
@@ -139,6 +139,9 @@ class BinTree
     @right = r
   end
 
+  # Iterador para árbol binario. Se realiza una llamada del bloque 
+  # proporcionado sobre el hijo izquierdo y derecho (solo si tiene sentido 
+  # realizar la operación)
   def each(&b) #duda preguntar si es each(b) o asi
     #[b.call(self),self,right]
     unless left.nil?
@@ -164,10 +167,9 @@ class GraphNode
     @children=c
   end
 
+  # Procedimiento que recibe un bloque, e itera sobre los hijos del nodo
   def each(&b) #Misma duda
-    #yield value
     children.each do |child|
-      #yield "qlq"
       unless child.nil?
         b.call(child)
       end

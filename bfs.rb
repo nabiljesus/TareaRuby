@@ -179,14 +179,24 @@ class GraphNode
   include BFS
 end
 
+##
+# Clase que modela acertijos de configuración como el de +Fox, Goose and Bag 
+# of Beans+ 
 def LCR
+  # Lector de la configuración actual del acertijo
   attr_reader :value
+
+  # Inicialización del juego, se recibe el estado inicial de la clase
   def initialize(a)
     #
   end
+  # Dado un bloque b, se itera sobre los hijos del estado actual
   def each(p)
     #
   end
+
+  # Procedimiento que resuelve el problema de búsqueda imprimiendo las acciones
+  # que se realizaron
   def solve
     #
   end

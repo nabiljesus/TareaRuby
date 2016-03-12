@@ -245,8 +245,8 @@ class LCR
     else
       #REVISAR ESTO ACA
       val_clone = self.value.clone
-      val_clone[val_clone.value[:where]]=(val_clone[val_clone.value[:where]].unshift missing_elem)
-      val_clone[val_clone.value[:where]]=val_clone[val_clone.value[:where]].sort
+      val_clone[self.value[:where]]=(val_clone[self.value[:where]].unshift missing_elem)
+      val_clone[self.value[:where]]=val_clone[self.value[:where]].sort
         
       message = "Dejando en la orilla " + val_clone[:where].to_s + " al " + missing_elem.to_s
       b.call(val_clone,message)
@@ -278,12 +278,13 @@ class LCR
       puts "===Papa: "
       puts node
       puts actValue
-      visited.unshift(actValue) #revisar
+      visited.unshift(actValue.to_s) #revisar
       actLCR=node.value[0]
+      puts visited.length
       #puts actValue
       cChildren=[]
       actLCR.each do |maybC,msg|
-        if (is_valid?(maybC) && !(visited.include? maybC))
+        if (is_valid?(maybC) && !(visited.include? maybC.to_s))
           puts "--reviso hijo--"
           puts maybC
           childLCR=LCR.new(maybC)
@@ -294,7 +295,6 @@ class LCR
             puts childNode.value
           end
           queue.push(childNode) #revisar
-          visited.push(maybC)
         end
       end
     end
@@ -334,7 +334,7 @@ class LCR
     def dangerous?(list)
       # puts list
       # puts ((list==[:wolf,:sheep]) or (list==[:cabbage,:sheep]))
-      return ((list==[:sheep,:wolf]) or (list==[:cabbage,:sheep]))
+      return ((list==[:sheep,:wolf]) or (list==[:cabbage,:sheep]) or (list==[:wolf,:sheep]) or (list==[:sheep,:cabbage]))
     end
 
     unsafe = [state[:left],state[:right]].any? { |l| dangerous?(l)}

@@ -245,8 +245,8 @@ class LCR
     else
       #REVISAR ESTO ACA
       val_clone = self.value.clone
-      val_clone[self.value[:where]]=(val_clone[self.value[:where]].unshift missing_elem)
-      val_clone[self.value[:where]]=val_clone[self.value[:where]].sort
+      val_clone[val_clone.value[:where]]=(val_clone[val_clone.value[:where]].unshift missing_elem)
+      val_clone[val_clone.value[:where]]=val_clone[val_clone.value[:where]].sort
         
       message = "Dejando en la orilla " + val_clone[:where].to_s + " al " + missing_elem.to_s
       b.call(val_clone,message)

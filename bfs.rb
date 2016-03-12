@@ -17,8 +17,9 @@ module BFS
         return val
       end
 
-      visited.push(node)
+      visited.push(node) #Pila Auxiliar para evitar entrar a ciclos.
 
+      # Recorro los hijos si existen.
       node.each do |child|
         if !(visited.include? child)
           queue.push(child)
@@ -35,10 +36,10 @@ module BFS
   def path(start,&predicate)
     queue = []
     queue.push([0,1,start])
-    visited = []
+    visited = [] #Pila Auxiliar para evitar entrar a ciclos.
     counter=1
-    familyTree=Hash[]
-
+    familyTree=Hash[] #Hash que dado un id de un nodo x, devuelve al padre de 
+                      #x y id de este.
     while(!queue.empty?)
       iddad,idnode,node = queue.shift
       visited.push(node)
@@ -49,6 +50,7 @@ module BFS
         return getPath(familyTree,idnode,[])
       end
 
+      # Recorro los hijos si existen.
       node.each do |child|
         if !(visited.include? child)
           counter+=1
@@ -65,7 +67,8 @@ module BFS
     queue = []
     queue.push(start)
     visited = []
-
+    # Siguiendo la misma estructura del recorido en los otros métodos,
+    # Nos valemos de una pila para hacer el recorrido en BFS.
     while(!queue.empty?)
       node = queue.shift
 
@@ -84,9 +87,10 @@ module BFS
 
 
   # Procedimiento para obtener el camino recorrido en la estructura
+  # Dado un hash de relaciones hijo, padre.
   def getPath(graph,counter,path=[])
 
-    if counter==0
+    if counter==0 #Nodo inicial tiene como padre a 0.
       return path
     end
     iddad,node = graph[counter]
@@ -97,8 +101,10 @@ module BFS
       return getPath(graph,iddad,path)
     end
   end
-
   private :getPath 
+
+  # Procedimiento que aplica un predicado y, de ser cierto, devuelve el nodo.
+  # En caso contrario, devuelve nil.
   def evalPred(node,&p)
     if p.call(node)
       return node
@@ -189,7 +195,7 @@ class LCR
     b.call(val_clone,message)
     
     # Si no hay elementos en el bote se pueden subir los de esa orilla,
-    # si alguno ya se encontraba en el transporte se puede bajar, o hacer swap
+    # si alguno ya se encontraba en el bote se puede bajar, o hacer swap.
     if self.value[:left].size + self.value[:right].size == 3
       self.value[self.value[:where]].each do |elem|
         val_clone                      = self.value.clone
@@ -204,7 +210,7 @@ class LCR
       val_clone = self.value.clone
       val_clone[val_clone[:where]] += [missing_elem]
       val_clone[val_clone[:where]]=val_clone[self.value[:where]].sort
-      message = "Drop " + missing_elem.to_s + " off"
+      message = "Drop " + missing_elem.to_s + " off."
       b.call(val_clone,message)
 
       # Swap por cada elemento de la orilla
@@ -213,7 +219,7 @@ class LCR
         val_clone[self.value[:where]] -= [elem]
         val_clone[self.value[:where]] += [missing_elem]
         val_clone[self.value[:where]]  = val_clone[self.value[:where]].sort
-        message = "Drop " + elem.to_s + " off at shore and taking " + missing_elem.to_s + " over."
+        message = "Drop " + elem.to_s + " off at shore and take " + missing_elem.to_s + " over."
         b.call(val_clone,message)
       end
 
@@ -225,10 +231,16 @@ class LCR
   # que se realizaron
   def solve
     ##Chequear que sea un estado inicial valido o arrojar exepcion
+    #Busca la orilla donde está el caso inicial y la almacena.
+    if @value[:left].size==3
+      shore  = "left"
+    else
+      shore  = "right"
+    end
 
     #Agregar valores iniciales
     iState   = @value
-    inode    = GraphNode.new([self,"Everyone in x shore"])
+    inode    = GraphNode.new([self,"Initially, everyone is at the "+shore+" shore."])
     myGraph  = inode
     queue    = [inode]
     actValue = @value
@@ -239,26 +251,32 @@ class LCR
     while (!queue.empty?)
       node=queue.shift
       actValue=node.value[0].value
-      visited.unshift(actValue.to_s) #revisar
+      visited.unshift(actValue.to_s)
       actLCR    = node.value[0]
+
+      #Genera los hijos del nodo actual.
       cChildren = []
       actLCR.each do |maybC,msg|
+        #Obvia a los hijos invalidos o ya visitados.
         if (is_valid?(maybC) && !(visited.include? maybC.to_s))
           childLCR=LCR.new(maybC)
           childNode=GraphNode.new([childLCR,msg])
           node.children+=[childNode]
           queue.push(childNode)
-
         end
       end
     end
 
-    # Recorriendo el Grafo generado, myGraph, en busqueda de la solucion deseada ((myGraph.path(myGraph,&proc ])))
-    myPath = []
+    # Recorriendo el Grafo generado, myGraph, en busqueda de la solución deseada e
+    # Imprime los movimientos necesarios para llegar a esta.
     checkIfSolution = proc {|node| node.value[0].value.to_s==solution.to_s}
     myPath = myGraph.path(myGraph,&checkIfSolution)
 
-    myPath.each {|val| puts "En estado: #{val.value[0].value} == Yo he #{val.value[1]}"}
+    # Impresión de los movimientos.
+    puts
+    myPath.each {|val| puts "• #{val.value[1]}"}
+    puts "• It's done."
+    puts
     
   end
 
@@ -295,14 +313,15 @@ class LCR
     not unsafe
   end
 
-  ##Dado un estado inicial, devuelve la solución deseada
+  ##Dado un estado inicial, devuelve la solución deseada.
+  ##(Partiendo de izquierda, devuelve derecha y viceversa)
   def getSolution(iState)
+    #Si no es un caso inicial, devuelve nil.
     if (iState[:left].size + iState[:right].size < 3) ||
        (iState[:left].size==3 && iState[:right].size !=0) ||
        (iState[:right].size==3 && iState[:left].size !=0)
-      #Arrojar exeption?
       return nil
-    else 
+    else #Caso contrario, devuelve la solución deseada.
       if iState[:left].size==3
         return {:where=>:right,:left=>[],:right=>[:cabbage,:sheep,:wolf]}
       else  

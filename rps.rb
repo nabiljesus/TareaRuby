@@ -1,3 +1,10 @@
+=begin
+    Implementación del juego piedra, papel o tijeras con estrategias.
+
+    Creado por:
+        Javier López
+        Nabil  Márquez
+=end
 ##
 # Súper-clase para los diferentes tipo de movimientos
 # en el juego de piedra, papel o tijera

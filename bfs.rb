@@ -1,3 +1,13 @@
+=begin
+    Módulo que define Búsqueda Generalizada en árboles binarios
+    y grafos. También resuelve el acertijo del Lobo, la Cabra y
+    el repollo.
+
+    Creado por:
+        Javier López
+        Nabil  Márquez
+=end
+
 ##
 # Mixin para recorrido Breadth-first Search
 module BFS
@@ -258,7 +268,7 @@ class LCR
       cChildren = []
       actLCR.each do |maybC,msg|
         #Obvia a los hijos invalidos o ya visitados.
-        if (is_valid?(maybC) && !(visited.include? maybC.to_s))
+        if (is_valid?(maybC) && !(visited.any? {|nvis| nvis.to_s==maybC.to_s}))
           childLCR=LCR.new(maybC)
           childNode=GraphNode.new([childLCR,msg])
           node.children+=[childNode]
@@ -289,14 +299,6 @@ class LCR
         return e
       end
     end
-  end
-
-  def compare_values(h1,h2)
-    res = true
-    res = res and h1[:where] == h2[:where]
-    res = res and h1[:left]  == h2[:left]
-    res = res and h1[:right] == h2[:right]
-    res
   end
 
   ##Dado un estado, devuelve true si es valido, false en caso contrario

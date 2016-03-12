@@ -1,12 +1,12 @@
 require_relative 'bfs'
 
-g = LCR.new({:where=>:left, :left=>[:sheep,:wolf], :right=>[]})
+g = LCR.new({:where=>:left, :left=>[:cabbage,:sheep,:wolf], :right=>[]})
 
-puts g.is_valid?({:where=>:left, :left=>[:wolf], :right=>[:cabbage,:sheep]})
+#puts g.is_valid?({:where=>:left, :left=>[:cabbage,:sheep, :wolf], :right=>[]})
 
 # g.each do |e,mensaje|
 #     puts e
 #     puts mensaje
 # end
 
-# g.solve
+g.solve

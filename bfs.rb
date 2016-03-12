@@ -272,6 +272,7 @@ class LCR
     while (actValue!=solution)
       node=queue.shift
       actValue=node.value[0].value
+      puts 
       puts "===Papa: "
       puts node
       puts actValue

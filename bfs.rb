@@ -232,7 +232,7 @@ class LCR
     b.call(val_clone,message)
     
     # Si no hay elementos en el bote se pueden subir los de esa orilla,
-    # si alguno ya se encontraba en el transporte se puede bajar 
+    # si alguno ya se encontraba en el transporte se puede bajar, o hacer swap
     if self.value[:left].size + self.value[:right].size == 3
       self.value[self.value[:where]].each do |elem|
         val_clone                      = self.value.clone
@@ -243,14 +243,26 @@ class LCR
         b.call(val_clone,message)
       end
     else
-      #REVISAR ESTO ACA
+      # Dejamos al elemento del bote en la orilla
       val_clone = self.value.clone
-      val_clone[self.value[:where]]=(val_clone[self.value[:where]].unshift missing_elem)
-      val_clone[self.value[:where]]=val_clone[self.value[:where]].sort
-        
+      val_clone[val_clone[:where]] += [missing_elem]
+      val_clone[val_clone[:where]]=val_clone[self.value[:where]].sort
       message = "Dejando en la orilla " + val_clone[:where].to_s + " al " + missing_elem.to_s
       b.call(val_clone,message)
+
+      # Swap por cada elemento de la orilla
+      self.value[self.value[:where]].each do |elem|
+        val_clone                      = self.value.clone
+        val_clone[self.value[:where]] -= [elem]
+        val_clone[self.value[:where]] += [missing_elem]
+        val_clone[self.value[:where]]  = val_clone[self.value[:where]].sort
+        message = "Subiendo a " + elem.to_s + " al bote y bajando a " + missing_elem.to_s
+        b.call(val_clone,message)
+      end
+
     end
+
+
 
     ## Cualquier animal que se encuentre en la 
     ##val_clone = self.value.clone
@@ -279,12 +291,13 @@ class LCR
       puts "===Papa: "
       puts node
       puts actValue
-      visited.unshift(actValue) #revisar
+      visited.unshift(actValue.to_s) #revisar
       actLCR=node.value[0]
+      puts visited.length
       #puts actValue
       cChildren=[]
       actLCR.each do |maybC,msg|
-        if (is_valid?(maybC) && !(visited.any? { |hash| hash.to_s == maybC.to_s }))
+        if (is_valid?(maybC) && !(visited.include? maybC.to_s))
           puts "--reviso hijo--"
           puts maybC
           childLCR=LCR.new(maybC)
@@ -295,8 +308,9 @@ class LCR
             puts childNode.value
           end
           queue.push(childNode) #revisar
+
           # visited.push(maybC)
-          puts visited.length()
+          # puts visited.length()
           # puts visited
         end
       end
@@ -341,7 +355,7 @@ class LCR
     # True en caso de que una orilla presente un caso peligroso,
     # no se contempla los 3 elementos en un lado como peligroso.
     def dangerous?(list)
-      return ((list==[:sheep,:wolf]) or (list==[:cabbage,:sheep]))
+      return ((list==[:sheep,:wolf]) or (list==[:cabbage,:sheep]) or (list==[:wolf,:sheep]) or (list==[:sheep,:cabbage]))
     end
 
     unsafe = [state[:left],state[:right]].any? { |l| dangerous?(l)}

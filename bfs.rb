@@ -228,7 +228,7 @@ class LCR
       val_clone[:where]=:left
     end
 
-    message = "Moviendo bote a la " + val_clone[:where].to_s
+    message = "Moving boat to " + val_clone[:where].to_s + "."
     b.call(val_clone,message)
     
     # Si no hay elementos en el bote se pueden subir los de esa orilla,
@@ -239,7 +239,7 @@ class LCR
         val_clone[self.value[:where]] -= [elem]
         val_clone[self.value[:where]]  = val_clone[self.value[:where]].sort
         
-        message = "Subiendo a " + elem.to_s + " al bote"
+        message = "Taking " + elem.to_s + " over."
         b.call(val_clone,message)
       end
     else
@@ -247,7 +247,7 @@ class LCR
       val_clone = self.value.clone
       val_clone[val_clone[:where]] += [missing_elem]
       val_clone[val_clone[:where]]=val_clone[self.value[:where]].sort
-      message = "Dejando en la orilla " + val_clone[:where].to_s + " al " + missing_elem.to_s
+      message = "Drop " + missing_elem.to_s + " off"
       b.call(val_clone,message)
 
       # Swap por cada elemento de la orilla
@@ -256,7 +256,7 @@ class LCR
         val_clone[self.value[:where]] -= [elem]
         val_clone[self.value[:where]] += [missing_elem]
         val_clone[self.value[:where]]  = val_clone[self.value[:where]].sort
-        message = "Subiendo a " + elem.to_s + " al bote y bajando a " + missing_elem.to_s
+        message = "Drop " + elem.to_s + " off at shore and taking " + missing_elem.to_s + " over."
         b.call(val_clone,message)
       end
 

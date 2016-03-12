@@ -284,7 +284,7 @@ class LCR
       #puts actValue
       cChildren=[]
       actLCR.each do |maybC,msg|
-        if (is_valid?(maybC) && !(visited.include? maybC))
+        if (is_valid?(maybC) && !(visited.any? { |hash| hash.to_s == maybC.to_s }))
           puts "--reviso hijo--"
           puts maybC
           childLCR=LCR.new(maybC)
@@ -295,7 +295,9 @@ class LCR
             puts childNode.value
           end
           queue.push(childNode) #revisar
-          visited.push(maybC)
+          # visited.push(maybC)
+          puts visited.length()
+          # puts visited
         end
       end
     end
@@ -327,7 +329,11 @@ class LCR
     end
   end
 
-  
+  def compare_values(h1,h2)
+    puts h1[:where] == h2[:where]
+    puts h1[:left]  == h2[:left]
+    puts h1[:right] == h2[:right]
+  end
 
   ##Dado un estado, devuelve true si es valido, false en caso contrario
   def is_valid?(state)

@@ -318,7 +318,7 @@ class LCR
 
     #Recorriendo el Grafo generado, myGraph, en busqueda de la solucion deseada ((myGraph.path(myGraph,&proc ])))
     myPath = []
-    checkIfSolution=proc {|node| node.value[0].value==solution}
+    checkIfSolution=proc {|node| node.value[0].value.to_s==solution.to_s}
     myPath = myGraph.path(myGraph,&checkIfSolution)
     x=proc {|node| node=='potato'}
     
@@ -337,7 +337,7 @@ class LCR
   ##Dado un estado con un symbol en el bote, devuelve dicho symbol.
   def missing_elem
     [:wolf,:cabbage,:sheep].each do |e|
-      unless ((self.value[:left].include? e) || (self.value[:left].include? e))
+      unless ((self.value[:left].include? e) || (self.value[:right].include? e))
         return e
       end
     end

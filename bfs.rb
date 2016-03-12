@@ -271,24 +271,28 @@ class LCR
     #Construyendo el árbol de estados hasta crear una solución posible 'solution'
     while (actValue!=solution)
       node=queue.shift
-      puts node
       actValue=node.value[0].value
+      puts "===Papa: "
+      puts node
       puts actValue
       visited.unshift(actValue) #revisar
       actLCR=node.value[0]
       #puts actValue
       cChildren=[]
       actLCR.each do |maybC,msg|
-        puts "--reviso hijo--"
-        puts !(visited.include? maybC)
         unless maybC.nil?
-          if (is_valid?(maybC,solution) && !(visited.include? maybC))
+          if (is_valid?(maybC) && !(visited.include? maybC))
+            puts "--reviso hijo--"
+            puts maybC
             childLCR=LCR.new(maybC)
             childNode=GraphNode.new([childLCR,msg])
             node.children.push(childNode)
+            unless !childNode.nil?
+              puts "CHILD NODE NULLLLL" #obviar estas 4 lineas
+              puts childNode.value
+            end
             queue.push(childNode) #revisar
             visited.push(maybC)
-            puts maybC
           end
         end
       end
@@ -319,7 +323,7 @@ class LCR
     # True en caso de que una orilla presente un caso peligroso,
     # no se contempla los 3 elementos en un lado como peligroso.
     def dangerous?(list)
-      return ((list==[:wolf,:sheep]) or (list==[:cabbage,:sheep]))
+      return ((list==[:sheep,:wolf]) or (list==[:cabbage,:sheep]))
     end
 
     unsafe = [state[:left],state[:right]].any? { |l| dangerous?(l)}

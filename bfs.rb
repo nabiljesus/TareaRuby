@@ -282,7 +282,7 @@ class LCR
         puts "--reviso hijo--"
         puts !(visited.include? maybC)
         unless maybC.nil?
-          if (isValid(maybC,solution) && !(visited.include? maybC))
+          if (is_valid?(maybC,solution) && !(visited.include? maybC))
             childLCR=LCR.new(maybC)
             childNode=GraphNode.new([childLCR,msg])
             node.children.push(childNode)
@@ -300,6 +300,8 @@ class LCR
     myPath = myGraph.path(myGraph,&checkIfSolution)
   end
 
+  # private
+
   ##Dado un estado con un symbol en el bote, devuelve dicho symbol.
   def missing_elem
     [:wolf,:cabbage,:sheep].each do |e|
@@ -309,17 +311,20 @@ class LCR
     end
   end
 
+  
+
   ##Dado un estado, devuelve true si es valido, false en caso contrario
-  def isValid(thisState,solution)
-    #puts thisState
-    eval=false
-    #puts thisState.to_s
-    #REVISAR ESTO ACA
-    eval= ((thisState[:left]==[:cabbage,:wolf] && (thisState[:right]==[] || thisState[:right]==[:sheep]))||
-          (thisState[:right]==[:cabbage,:wolf] && (thisState[:left]==[] || thisState[:left]==[:sheep]))) ||
-          thisState==solution || thisState==@value
-    #puts eval
-    return eval
+  def is_valid?(state)
+
+    def dangerous?(list)
+      # puts list
+      # puts ((list==[:wolf,:sheep]) or (list==[:cabbage,:sheep]))
+      return ((list==[:wolf,:sheep]) or (list==[:cabbage,:sheep]))
+    end
+
+    unsafe = [state[:left],state[:right]].any? { |l| dangerous?(l)}
+
+    not unsafe
   end
 
   ##Dado un estado inicial, devuelve la solución deseada

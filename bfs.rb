@@ -316,9 +316,9 @@ class LCR
   ##Dado un estado, devuelve true si es valido, false en caso contrario
   def is_valid?(state)
 
+    # True en caso de que una orilla presente un caso peligroso,
+    # no se contempla los 3 elementos en un lado como peligroso.
     def dangerous?(list)
-      # puts list
-      # puts ((list==[:wolf,:sheep]) or (list==[:cabbage,:sheep]))
       return ((list==[:wolf,:sheep]) or (list==[:cabbage,:sheep]))
     end
 

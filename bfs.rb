@@ -8,11 +8,11 @@ module BFS
     queue = []
     queue.push(start)
     visited = []
-    
+    puts
     while(!queue.empty?)
       node = queue.shift
       print "He visitado a: "
-      puts node.value
+      puts node.value[0].value
 
       val=evalPred(node,&predicate)
       unless val.nil?
@@ -21,8 +21,11 @@ module BFS
 
       visited.push(node)
 
+      puts "--Mis hijos son:"
       node.each do |child|
         if !(visited.include? child)
+          print "----"
+          puts child.value[0].value
           queue.push(child)
         end
       end
@@ -269,7 +272,7 @@ class LCR
     visited=[]
     solution=getSolution(@value)
     #Construyendo el árbol de estados hasta crear una solución posible 'solution'
-    while (actValue!=solution)
+    while (!queue.empty?)
       node=queue.shift
       actValue=node.value[0].value
       puts 
@@ -301,8 +304,18 @@ class LCR
 
     #Recorriendo el Grafo generado, myGraph, en busqueda de la solucion deseada ((myGraph.path(myGraph,&proc ])))
     myPath = []
-    checkIfSolution=proc {|node,mesg| node.value==solution}
+    checkIfSolution=proc {|node| node.value[0].value==solution}
     myPath = myGraph.path(myGraph,&checkIfSolution)
+    x=proc {|node| node=='potato'}
+    
+    puts "La busqueda:"
+    myGraph.find(myGraph,&x)
+
+    print "Is it null? : "
+    puts myPath.nil?
+    puts "\n\nDa answer isssssssssssssssssss\n\n"
+    myPath.each {|val| puts "En estado: #{val.value[0].value} == Yo he #{val.value[1]}"}
+    
   end
 
   # private

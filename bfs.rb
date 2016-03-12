@@ -8,11 +8,9 @@ module BFS
     queue = []
     queue.push(start)
     visited = []
-    puts
+
     while(!queue.empty?)
       node = queue.shift
-      print "He visitado a: "
-      puts node.value[0].value
 
       val=evalPred(node,&predicate)
       unless val.nil?
@@ -21,11 +19,8 @@ module BFS
 
       visited.push(node)
 
-      puts "--Mis hijos son:"
       node.each do |child|
         if !(visited.include? child)
-          print "----"
-          puts child.value[0].value
           queue.push(child)
         end
       end
@@ -46,8 +41,6 @@ module BFS
 
     while(!queue.empty?)
       iddad,idnode,node = queue.shift
-      print "Desencolo a: "
-      puts node.value
       visited.push(node)
       familyTree[idnode]=[iddad,node]
 
@@ -58,13 +51,8 @@ module BFS
 
       node.each do |child|
         if !(visited.include? child)
-          print "Encolo a: "
-          puts child.value
           counter+=1
           queue.push([idnode,counter,child])
-        else
-          print "Ya visito a: "
-          puts child.value
         end
       end
     end
@@ -80,11 +68,8 @@ module BFS
 
     while(!queue.empty?)
       node = queue.shift
-      print "He visitado a: "
-      puts node.value
 
       action.call(node)
-
       visited.push(node)
 
       node.each do |child|
@@ -100,13 +85,8 @@ module BFS
 
   # Procedimiento para obtener el camino recorrido en la estructura
   def getPath(graph,counter,path=[])
-    puts 'Entered'
+
     if counter==0
-      puts 'llegue a 0'
-      puts "THe path is:"
-      #myp=[]
-      #graph.each {|i,p| myp+=[[p[2].value,p[1].value,p[0]]]}
-      #puts myp.to_s
       return path
     end
     iddad,node = graph[counter]
@@ -114,7 +94,6 @@ module BFS
       return nil
     else
       path.unshift(node)
-      puts '----'
       return getPath(graph,iddad,path)
     end
   end
@@ -146,8 +125,7 @@ class BinTree
   # Iterador para árbol binario. Se realiza una llamada del bloque 
   # proporcionado sobre el hijo izquierdo y derecho (solo si tiene sentido 
   # realizar la operación)
-  def each(&b) #duda preguntar si es each(b) o asi
-    #[b.call(self),self,right]
+  def each(&b) 
     unless left.nil?
       b.call(left)
     end
@@ -192,27 +170,6 @@ class LCR
   # Inicialización del juego, se recibe el estado inicial de la clase
 
   def initialize(value=Hash[:where=>:left,:left=>[:cabbage,:sheep,:wolf],:right=>[]])
-  #   begin
-  #     hkeys=value.keys
-  #     tsiz=value[:left].length+value[:right].length
-  #   rescue
-  #     #handle the error here
-  #   ensure
-  #     !(value.nil?)
-  #   end
-  #   ensure
-  #     hkeys.all? {|key| key.class.name=="Symbol"}
-  #   end
-  #   #ensure
-  #   #  hkeys.include? :right && hkeys.include? :left && hkeys.include? :where   
-  #   #end
-  #   ensure
-  #     [:right,:left].include? value[:where]
-  #   end
-  #   ensure
-  #     tsiz==2 || tsiz == 3
-  #   end
-  # else
     myH={:where=>value[:where],:left=>value[:left].sort,:right=>value[:right].sort}
     @value=myH
   end
@@ -260,13 +217,7 @@ class LCR
         b.call(val_clone,message)
       end
 
-    end
-
-
-
-    ## Cualquier animal que se encuentre en la 
-    ##val_clone = self.value.clone
-    
+    end    
 
   end
 
@@ -276,63 +227,42 @@ class LCR
     ##Chequear que sea un estado inicial valido o arrojar exepcion
 
     #Agregar valores iniciales
-    iState=@value
-    inode=GraphNode.new([self,"Everyone in x shore"])
-    myGraph=inode
-    queue=[inode]
-    actValue=@value
-    visited=[]
-    solution=getSolution(@value)
+    iState   = @value
+    inode    = GraphNode.new([self,"Everyone in x shore"])
+    myGraph  = inode
+    queue    = [inode]
+    actValue = @value
+    visited  = []
+    solution = getSolution(@value)
+
     #Construyendo el árbol de estados hasta crear una solución posible 'solution'
     while (!queue.empty?)
       node=queue.shift
       actValue=node.value[0].value
-      puts 
-      puts "===Papa: "
-      puts node
-      puts actValue
       visited.unshift(actValue.to_s) #revisar
-      actLCR=node.value[0]
-      puts visited.length
-      #puts actValue
-      cChildren=[]
+      actLCR    = node.value[0]
+      cChildren = []
       actLCR.each do |maybC,msg|
         if (is_valid?(maybC) && !(visited.include? maybC.to_s))
-          puts "--reviso hijo--"
-          puts maybC
           childLCR=LCR.new(maybC)
           childNode=GraphNode.new([childLCR,msg])
           node.children+=[childNode]
-          unless !childNode.nil?
-            puts "CHILD NODE NULLLLL" #obviar estas 4 lineas
-            puts childNode.value
-          end
-          queue.push(childNode) #revisar
+          queue.push(childNode)
 
-          # visited.push(maybC)
-          # puts visited.length()
-          # puts visited
         end
       end
     end
 
-    #Recorriendo el Grafo generado, myGraph, en busqueda de la solucion deseada ((myGraph.path(myGraph,&proc ])))
+    # Recorriendo el Grafo generado, myGraph, en busqueda de la solucion deseada ((myGraph.path(myGraph,&proc ])))
     myPath = []
-    checkIfSolution=proc {|node| node.value[0].value.to_s==solution.to_s}
+    checkIfSolution = proc {|node| node.value[0].value.to_s==solution.to_s}
     myPath = myGraph.path(myGraph,&checkIfSolution)
-    x=proc {|node| node=='potato'}
-    
-    puts "La busqueda:"
-    myGraph.find(myGraph,&x)
 
-    print "Is it null? : "
-    puts myPath.nil?
-    puts "\n\nDa answer isssssssssssssssssss\n\n"
     myPath.each {|val| puts "En estado: #{val.value[0].value} == Yo he #{val.value[1]}"}
     
   end
 
-  # private
+  private
 
   ##Dado un estado con un symbol en el bote, devuelve dicho symbol.
   def missing_elem
@@ -344,9 +274,11 @@ class LCR
   end
 
   def compare_values(h1,h2)
-    puts h1[:where] == h2[:where]
-    puts h1[:left]  == h2[:left]
-    puts h1[:right] == h2[:right]
+    res = true
+    res = res and h1[:where] == h2[:where]
+    res = res and h1[:left]  == h2[:left]
+    res = res and h1[:right] == h2[:right]
+    res
   end
 
   ##Dado un estado, devuelve true si es valido, false en caso contrario

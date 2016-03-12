@@ -18,6 +18,11 @@ class Movement
   def to_s
     self.rep
   end
+
+  # Los métodos vs_scissors vs_rock vs_paper a pesar no fueron definidos en el
+  # enunciado no pueden ser privados ya que deben ser llamados por objetos 
+  # de otra clase.
+
 end
 
 ##
@@ -31,7 +36,7 @@ class Rock < Movement
   def score(m)
     m.vs_rock
   end
-
+  
   # Resultado de enfrentarse contra tijeras
   def vs_scissors
     [0,1]
@@ -59,6 +64,7 @@ class Paper < Movement
   def score(m)
     oponent = m.vs_paper
   end
+ 
 
   # Análogo a movimientos en la clase Roca
   def vs_rock
@@ -88,6 +94,7 @@ class Scissors < Movement
   def score(m)
     oponent = m.vs_scissors
   end
+ 
 
   # Análogo a movimientos en la clase Roca
   def vs_paper
@@ -133,6 +140,8 @@ class Strategy
 
   # Agrega el nombre de la clase a la representación como string in caso de ser
   # necesario
+  private 
+
   def add_rep
     "<" + self.class.to_s + " Strategy"
   end
@@ -319,9 +328,10 @@ class Match
     @last_move    = nil
     @results      = [0,0]
     @times_played = 0
-    @strategies = @strategies.map { |strategy| strategy.reset }
+    @strategies   = @strategies.map { |strategy| strategy.reset }
   end
 
+  private
   # Representación de los resultados
   def results
     { players[0]=>@results[0],
@@ -329,7 +339,6 @@ class Match
       :Rounds   =>@times_played}
   end
 
-  private
   # Procedimiento para realizar una jugada
   def play
     # El jugador 1 realiza un movimiento (posiblemente el primero de la partida)

@@ -283,20 +283,18 @@ class LCR
       #puts actValue
       cChildren=[]
       actLCR.each do |maybC,msg|
-        unless maybC.nil?
-          if (is_valid?(maybC) && !(visited.include? maybC))
-            puts "--reviso hijo--"
-            puts maybC
-            childLCR=LCR.new(maybC)
-            childNode=GraphNode.new([childLCR,msg])
-            node.children.push(childNode)
-            unless !childNode.nil?
-              puts "CHILD NODE NULLLLL" #obviar estas 4 lineas
-              puts childNode.value
-            end
-            queue.push(childNode) #revisar
-            visited.push(maybC)
+        if (is_valid?(maybC) && !(visited.include? maybC))
+          puts "--reviso hijo--"
+          puts maybC
+          childLCR=LCR.new(maybC)
+          childNode=GraphNode.new([childLCR,msg])
+          node.children+=[childNode]
+          unless !childNode.nil?
+            puts "CHILD NODE NULLLLL" #obviar estas 4 lineas
+            puts childNode.value
           end
+          queue.push(childNode) #revisar
+          visited.push(maybC)
         end
       end
     end

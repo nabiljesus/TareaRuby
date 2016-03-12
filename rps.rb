@@ -19,7 +19,7 @@ class Movement
     self.rep
   end
 
-  # Los métodos vs_scissors vs_rock vs_paper a pesar no fueron definidos en el
+  # Los métodos vs_scissors, vs_rock y vs_paper aunque no fueron definidos en el
   # enunciado no pueden ser privados ya que deben ser llamados por objetos 
   # de otra clase.
 

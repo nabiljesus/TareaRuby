@@ -282,8 +282,6 @@ end
 # jugado, el último movimiento realizado, los jugadores y sus respectivas
 # estrategias
 class Match
-  attr_reader   :players,:strategies, :last_move,:times_played
-
   # Inicialización, se debe recibir un hash con las claves de los 2 jugadores 
   # y sus estrategias, en caso de este parámetro no cumpla con estas
   # especificaciones se genera una excepción
@@ -334,17 +332,17 @@ class Match
   private
   # Representación de los resultados
   def results
-    { players[0]=>@results[0],
-      players[1]=>@results[1],
-      :Rounds   =>@times_played}
+    { @players[0]=>@results[0],
+      @players[1]=>@results[1],
+      :Rounds    =>@times_played}
   end
 
   # Procedimiento para realizar una jugada
   def play
     # El jugador 1 realiza un movimiento (posiblemente el primero de la partida)
-    p1 = strategies[0].next(@last_move) # last_move puede ser o no nil
+    p1 = @strategies[0].next(@last_move) # last_move puede ser o no nil
     # El jugador 2 realiza otro movimiento y recibe la jugada de j1
-    p2 = strategies[1].next(p1)
+    p2 = @strategies[1].next(p1)
     # Se actualiza el último movimiento
     @last_move = p2
     # Se realiza la jugada y se actualizan los resultados

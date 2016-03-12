@@ -25,6 +25,11 @@ class Movement
   def to_s
     self.rep
   end
+
+  # Los métodos vs_scissors, vs_rock y vs_paper aunque no fueron definidos en el
+  # enunciado no pueden ser privados ya que deben ser llamados por objetos 
+  # de otra clase.
+
 end
 
 ##
@@ -38,7 +43,7 @@ class Rock < Movement
   def score(m)
     m.vs_rock
   end
-
+  
   # Resultado de enfrentarse contra tijeras
   def vs_scissors
     [0,1]
@@ -66,6 +71,7 @@ class Paper < Movement
   def score(m)
     oponent = m.vs_paper
   end
+ 
 
   # Análogo a movimientos en la clase Roca
   def vs_rock
@@ -95,6 +101,7 @@ class Scissors < Movement
   def score(m)
     oponent = m.vs_scissors
   end
+ 
 
   # Análogo a movimientos en la clase Roca
   def vs_paper
@@ -140,6 +147,8 @@ class Strategy
 
   # Agrega el nombre de la clase a la representación como string in caso de ser
   # necesario
+  private 
+
   def add_rep
     "<" + self.class.to_s + " Strategy"
   end
@@ -280,8 +289,6 @@ end
 # jugado, el último movimiento realizado, los jugadores y sus respectivas
 # estrategias
 class Match
-  attr_reader   :players,:strategies, :last_move,:times_played
-
   # Inicialización, se debe recibir un hash con las claves de los 2 jugadores 
   # y sus estrategias, en caso de este parámetro no cumpla con estas
   # especificaciones se genera una excepción
@@ -326,23 +333,23 @@ class Match
     @last_move    = nil
     @results      = [0,0]
     @times_played = 0
-    @strategies = @strategies.map { |strategy| strategy.reset }
-  end
-
-  # Representación de los resultados
-  def results
-    { players[0]=>@results[0],
-      players[1]=>@results[1],
-      :Rounds   =>@times_played}
+    @strategies   = @strategies.map { |strategy| strategy.reset }
   end
 
   private
+  # Representación de los resultados
+  def results
+    { @players[0]=>@results[0],
+      @players[1]=>@results[1],
+      :Rounds    =>@times_played}
+  end
+
   # Procedimiento para realizar una jugada
   def play
     # El jugador 1 realiza un movimiento (posiblemente el primero de la partida)
-    p1 = strategies[0].next(@last_move) # last_move puede ser o no nil
+    p1 = @strategies[0].next(@last_move) # last_move puede ser o no nil
     # El jugador 2 realiza otro movimiento y recibe la jugada de j1
-    p2 = strategies[1].next(p1)
+    p2 = @strategies[1].next(p1)
     # Se actualiza el último movimiento
     @last_move = p2
     # Se realiza la jugada y se actualizan los resultados
